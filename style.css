@@ -1,0 +1,25 @@
+table, tr, td {
+    border: 1px solid black;
+    border-collapse: collapse;
+}
+
+table td {
+    width: 15px;
+    height: 15px;
+}
+
+.info-cell {
+    background-color: lightgrey;
+}
+
+table td:first-child {
+    width: 50px;
+}
+
+tbody tr:first-child td {
+    height: 50px;
+}
+
+.game-cell.selected {
+    background-color: grey;
+}
