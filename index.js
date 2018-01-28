@@ -1,4 +1,4 @@
-const numRows = 20;
+const numRows = 4;
 const numCols = numRows;
 const board = new Array(numRows);
 const tableCells = new Array(numRows + 1);
@@ -16,8 +16,24 @@ tbody.addEventListener('click', (e) => {
     if (row >= 0 && col >= 0) {
         board[row][col].isChecked = !board[row][col].isChecked;
         updateTable();
+        checkForWin();
     }
 });
+
+function checkForWin() {
+    for (let i = 1; i < numRows + 1; i++) {
+        for (let j = 1; j < numCols + 1; j++) {
+            let tableCell = tableCells[i][j];
+            let cell = board[i - 1][j - 1];
+            if ((cell.isSpot && !cell.isChecked)
+                || (!cell.isSpot && cell.isChecked)) {
+                return;
+            }
+        }
+    }
+
+    alert('You win!');
+}
 
 // updates game cells, not info cells
 function updateTable() {
