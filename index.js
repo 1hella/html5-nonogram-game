@@ -1,4 +1,4 @@
-const numRows = 4;
+const numRows = 20;
 const numCols = numRows;
 const board = new Array(numRows);
 const tableCells = new Array(numRows + 1);
@@ -7,6 +7,7 @@ const percentSpots = 65;
 
 makeTable();
 makeGame();
+setHints();
 
 tbody.addEventListener('click', (e) => {
     let cell = e.target;
@@ -19,6 +20,62 @@ tbody.addEventListener('click', (e) => {
         checkForWin();
     }
 });
+
+function setHints() {
+    // horizontal
+    for (let i = 1; i < numRows + 1; i++) {
+        let row = [];
+        let count = 0;
+        for (let j = 1; j < numCols + 1; j++) {
+            let cell = board[i - 1][j - 1];
+
+            if (cell.isSpot) {
+                count++;
+            } else if (count > 0) {
+                row.push(count);
+                count = 0;
+            }
+        }
+
+        if (count > 0) {
+            row.push(count);
+        }
+
+        let infoCell = tableCells[i][0];
+        row.forEach(num => {
+            let span = document.createElement('span');
+            span.innerHTML = num;
+            infoCell.appendChild(span);
+        })
+    }
+
+    // vertical
+    for (let j = 1; j < numCols + 1; j++) {
+        let col = [];
+        let count = 0;
+        for (let i = 1; i < numRows + 1; i++) {
+            let cell = board[i - 1][j - 1];
+
+            if (cell.isSpot) {
+                count++;
+            } else if (count > 0) {
+                col.push(count);
+                count = 0;
+            }
+        }
+
+        if (count > 0) {
+            col.push(count);
+        }
+
+        let infoCell = tableCells[0][j];
+        col.forEach(num => {
+            let span = document.createElement('span');
+            span.innerHTML = num;
+            infoCell.appendChild(span);
+        })
+    }
+}
 
 function checkForWin() {
     for (let i = 1; i < numRows + 1; i++) {
@@ -80,4 +137,26 @@ function makeTable() {
 
         tbody.appendChild(row);
     }
+}
+
+function reset() {
+    for (let i = 1; i < numRows + 1; i++) {
+        for (let j = 1; j < numCols + 1; j++) {
+            let cell = board[i - 1][j - 1];
+            cell.isChecked = false;
+        }
+    }
+
+    updateTable();
+}
+
+function solve() {
+    for (let i = 1; i < numRows + 1; i++) {
+        for (let j = 1; j < numCols + 1; j++) {
+            let cell = board[i - 1][j - 1];
+            cell.isChecked = cell.isSpot;
+        }
+    }
+
+    updateTable();
 }
