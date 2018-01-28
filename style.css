@@ -20,6 +20,6 @@ tbody tr:first-child td {
     height: 50px;
 }
 
-.game-cell.selected {
+.game-cell.checked {
     background-color: grey;
 }
