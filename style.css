@@ -4,8 +4,9 @@ table, tr, td {
 }
 
 table td {
-    width: 20px;
-    height: 20px;
+    min-width: 25px;
+    width: 25px;
+    height: 25px;
 }
 
 .game-cell.checked {
@@ -22,6 +23,15 @@ table td {
 
 .info-cell {
     background-color: lightgrey;
+}
+
+.info-cell span.checked {
+    text-decoration: line-through;
+    color: grey;
+}
+
+button {
+
 }
 
 /* side info cells */

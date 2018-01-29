@@ -1,49 +1,52 @@
-const numRows = 20;
-const numCols = numRows;
-const board = new Array(numRows);
-const tableCells = new Array(numRows + 1);
-const tbody = document.getElementById('game-table-body');
-const percentSpots = 75;
+const NUM_ROWS = 20;
+const NUM_COLS = NUM_ROWS;
+const EASY_PERCENT = 95;
+const MEDIUM_PERCENT = 85;
+const HARD_PERCENT = 75;
+const EASY_DIFFICULTY = 'easy';
+const MEDIUM_DIFFICULTY = 'medium';
+const HARD_DIFFICULTY = 'hard';
+const STATE_UNSELECTED = 0;
+const STATE_SELECTED = 1;
+const STATE_MARKED = 2;
+const DEFAULT_DIFFICULTY = MEDIUM_DIFFICULTY;
 
-const UNSELECTED = 0;
-const SELECTED = 1;
-const MARKED = 2;
+const board = new Array(NUM_ROWS);
+const tableCells = new Array(NUM_ROWS + 1);
+const tbody = document.getElementById('game-table-body');
+
+let percentSpots;
 
 makeTable();
-makeGame();
-setHints();
+start(DEFAULT_DIFFICULTY);
 
-tbody.addEventListener('click', (e) => {
-    let tableCell = e.target;
-    let row = tableCell.dataset.row;
-    let col = tableCell.dataset.col;
-
-    if (row >= 0 && col >= 0) {
-        let cell = board[row][col];
-
-        switch (cell.selectedState) {
-            case UNSELECTED:
-                cell.selectedState = SELECTED;
-                break;
-            case SELECTED:
-                cell.selectedState = MARKED;
-                break;
-            case MARKED:
-                cell.selectedState = UNSELECTED;
-                break;
-        }
-
-        updateTable();
-        checkForWin();
+function start(difficulty) {
+    switch (difficulty) {
+        case EASY_DIFFICULTY:
+            percentSpots = EASY_PERCENT;
+            break;
+        case MEDIUM_DIFFICULTY:
+            percentSpots = MEDIUM_PERCENT;
+            break;
+        case HARD_DIFFICULTY:
+            percentSpots = HARD_PERCENT;
+            break;
+        default:
+            start(DEFAULT_DIFFICULTY);
+            break;
     }
-});
+
+    makeGame();
+    setHints();
+    reset();
+}
 
 function setHints() {
     // horizontal
-    for (let i = 1; i < numRows + 1; i++) {
+    for (let i = 1; i < NUM_ROWS + 1; i++) {
         let row = [];
         let count = 0;
-        for (let j = 1; j < numCols + 1; j++) {
+        for (let j = 1; j < NUM_COLS + 1; j++) {
             let cell = board[i - 1][j - 1];
 
             if (cell.isSpot) {
@@ -59,6 +62,10 @@ function setHints() {
         }
 
         let infoCell = tableCells[i][0];
+        while (infoCell.firstChild) {
+            infoCell.removeChild(infoCell.firstChild);
+        }
+
         row.forEach(num => {
             let span = document.createElement('span');
             span.innerHTML = num;
@@ -67,10 +74,10 @@ function setHints() {
     }
 
     // vertical
-    for (let j = 1; j < numCols + 1; j++) {
+    for (let j = 1; j < NUM_COLS + 1; j++) {
         let col = [];
         let count = 0;
-        for (let i = 1; i < numRows + 1; i++) {
+        for (let i = 1; i < NUM_ROWS + 1; i++) {
             let cell = board[i - 1][j - 1];
 
             if (cell.isSpot) {
@@ -86,21 +93,38 @@ function setHints() {
         }
 
         let infoCell = tableCells[0][j];
+        while (infoCell.firstChild) {
+            infoCell.removeChild(infoCell.firstChild);
+        }
+
         col.forEach(num => {
             let span = document.createElement('span');
             span.innerHTML = num;
             infoCell.appendChild(span);
         })
     }
+
+    // click listeners
+    let spans = document.querySelectorAll('.info-cell span');
+    spans.forEach(span => {
+        span.addEventListener('click', e => {
+            let target = e.target;
+            if (target.classList.contains('checked')) {
+                target.classList.remove('checked');
+            } else {
+                target.classList.add('checked');
+            }
+        });
+    });
 }
 
 function checkForWin() {
-    for (let i = 1; i < numRows + 1; i++) {
-        for (let j = 1; j < numCols + 1; j++) {
+    for (let i = 1; i < NUM_ROWS + 1; i++) {
+        for (let j = 1; j < NUM_COLS + 1; j++) {
             let tableCell = tableCells[i][j];
             let cell = board[i - 1][j - 1];
-            if ((cell.isSpot && cell.selectedState !== SELECTED)
-                || (!cell.isSpot && cell.selectedState === SELECTED)) {
+            if ((cell.isSpot && cell.selectedState !== STATE_SELECTED)
+                || (!cell.isSpot && cell.selectedState === STATE_SELECTED)) {
                 return;
             }
         }
@@ -111,14 +135,14 @@ function checkForWin() {
 
 // updates game cells, not info cells
 function updateTable() {
-    for (let i = 1; i < numRows + 1; i++) {
-        for (let j = 1; j < numCols + 1; j++) {
+    for (let i = 1; i < NUM_ROWS + 1; i++) {
+        for (let j = 1; j < NUM_COLS + 1; j++) {
             let tableCell = tableCells[i][j];
             let cell = board[i - 1][j - 1];
-            if (cell.selectedState === SELECTED) {
+            if (cell.selectedState === STATE_SELECTED) {
                 tableCell.classList.add("checked");
                 tableCell.classList.remove("marked")
-            } else if (cell.selectedState === MARKED) {
+            } else if (cell.selectedState === STATE_MARKED) {
                 tableCell.classList.add("marked");
                 tableCell.classList.remove("checked")
             } else {
@@ -130,11 +154,11 @@ function updateTable() {
 }
 
 function makeGame() {
-    for (let i = 0; i < numRows; i++) {
-        board[i] = new Array(numCols);
-        for (let j = 0; j < numCols; j++) {
+    for (let i = 0; i < NUM_ROWS; i++) {
+        board[i] = new Array(NUM_COLS);
+        for (let j = 0; j < NUM_COLS; j++) {
             board[i][j] = {
-                selectedState: UNSELECTED,
+                selectedState: STATE_UNSELECTED,
                 isSpot: Math.random() >= 1 - (percentSpots / 100)
             }
         }
@@ -142,11 +166,11 @@ function makeGame() {
 }
 
 function makeTable() {
-    for (let i = 0; i < numRows + 1; i++) {
-        tableCells[i] = new Array(numCols + 1);
+    for (let i = 0; i < NUM_ROWS + 1; i++) {
+        tableCells[i] = new Array(NUM_COLS + 1);
         let row = document.createElement('tr');
 
-        for (let j = 0; j < numCols + 1; j++) {
+        for (let j = 0; j < NUM_COLS + 1; j++) {
             let cell = document.createElement('td');
             let isInfoCell = i === 0 || j === 0;
             cell.setAttribute('data-row', i - 1);
@@ -159,13 +183,38 @@ function makeTable() {
 
         tbody.appendChild(row);
     }
+
+    tbody.addEventListener('click', (e) => {
+        let tableCell = e.target;
+        let row = tableCell.dataset.row;
+        let col = tableCell.dataset.col;
+
+        if (row >= 0 && col >= 0) {
+            let cell = board[row][col];
+
+            switch (cell.selectedState) {
+                case STATE_UNSELECTED:
+                    cell.selectedState = STATE_SELECTED;
+                    break;
+                case STATE_SELECTED:
+                    cell.selectedState = STATE_MARKED;
+                    break;
+                case STATE_MARKED:
+                    cell.selectedState = STATE_UNSELECTED;
+                    break;
+            }
+
+            updateTable();
+            checkForWin();
+        }
+    });
 }
 
 function reset() {
-    for (let i = 1; i < numRows + 1; i++) {
-        for (let j = 1; j < numCols + 1; j++) {
+    for (let i = 1; i < NUM_ROWS + 1; i++) {
+        for (let j = 1; j < NUM_COLS + 1; j++) {
             let cell = board[i - 1][j - 1];
-            cell.selectedState = UNSELECTED;
+            cell.selectedState = STATE_UNSELECTED;
         }
     }
 
@@ -173,10 +222,10 @@ function reset() {
 }
 
 function solve() {
-    for (let i = 1; i < numRows + 1; i++) {
-        for (let j = 1; j < numCols + 1; j++) {
+    for (let i = 1; i < NUM_ROWS + 1; i++) {
+        for (let j = 1; j < NUM_COLS + 1; j++) {
             let cell = board[i - 1][j - 1];
-            cell.selectedState = cell.isSpot ? SELECTED : UNSELECTED;
+            cell.selectedState = cell.isSpot ? STATE_SELECTED : STATE_UNSELECTED;
         }
     }
 
