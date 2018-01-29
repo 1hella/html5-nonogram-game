@@ -8,5 +8,6 @@ https://stackoverflow.com/questions/39559665/css-background-image-shrink-to-fit-
 https://stackoverflow.com/questions/22767609/add-event-listener-to-dom-elements-based-on-class
 https://stackoverflow.com/questions/3955229/remove-all-child-elements-of-a-dom-node-in-javascript
 https://www.w3schools.com/cssref/pr_text_text-decoration.asp
+https://en.wikipedia.org/wiki/Immediately-invoked_function_expression
 
 Marked cell icon: https://icons8.com/icon/46/delete
