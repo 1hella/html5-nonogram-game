@@ -21,9 +21,12 @@
 
     document.getElementById('reset').addEventListener('click', reset);
     document.getElementById('solve').addEventListener('click', solve);
-    document.getElementById('start-easy').addEventListener('click', () => start(EASY_DIFFICULTY));
-    document.getElementById('start-medium').addEventListener('click', () => start(MEDIUM_DIFFICULTY));
-    document.getElementById('start-hard').addEventListener('click', () => start(HARD_DIFFICULTY));
+    document.getElementById('start-easy').addEventListener('click',
+        () => start(EASY_DIFFICULTY));
+    document.getElementById('start-medium').addEventListener('click',
+        () => start(MEDIUM_DIFFICULTY));
+    document.getElementById('start-hard').addEventListener('click',
+        () => start(HARD_DIFFICULTY));
 
     makeTable();
     start(DEFAULT_DIFFICULTY);
@@ -73,12 +76,15 @@
             while (infoCell.firstChild) {
                 infoCell.removeChild(infoCell.firstChild);
             }
+            let div = document.createElement('div');
 
             row.forEach(num => {
                 let span = document.createElement('span');
                 span.innerHTML = num;
-                infoCell.appendChild(span);
-            })
+                div.appendChild(span);
+            });
+
+            infoCell.appendChild(div);
         }
 
         // vertical
@@ -105,11 +111,14 @@
                 infoCell.removeChild(infoCell.firstChild);
             }
 
+            let div = document.createElement('div');
             col.forEach(num => {
                 let span = document.createElement('span');
                 span.innerHTML = num;
-                infoCell.appendChild(span);
-            })
+                div.appendChild(span);
+            });
+
+            infoCell.appendChild(div);
         }
 
         // click listeners
@@ -138,7 +147,8 @@
             }
         }
 
-        alert('You win!');
+        // give enough time for css of last cell to update
+        setTimeout(() => alert('You win!'), 50);
     }
 
     // updates game cells, not info cells

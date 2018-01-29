@@ -1,6 +1,52 @@
+body {
+    margin: 15px;
+    /* background-color: #EDDCCB; */
+    font-family: helvetica, arial, sans-serif;
+    display: flex;
+    flex-wrap: wrap;
+}
+table {
+    background-color: white;
+}
 table, tr, td {
     border: 1px solid black;
     border-collapse: collapse;
+}
+
+section {
+    display: inline-block;
+    text-align: center;
+}
+
+.intro {
+    margin-bottom: 0;
+}
+
+h1 {
+    margin-bottom: 0;
+}
+
+h3, h4 {
+    margin-top: 0;
+}
+
+section.features {
+    align-self: center;
+    margin-left: 20px;
+}
+
+div.features {
+    display: inline-block;
+    margin: auto;
+    text-align: left;
+}
+
+h3.features {
+    margin-bottom: 0;
+}
+
+ul.features {
+    margin-top: 0;
 }
 
 table td {
@@ -53,13 +99,12 @@ table td:first-child span {
 /* top info cells */
 tbody tr:first-child td {
     height: 50px;
-    align-items: center;
-    justify-content: center;
 }
 
-tbody tr:first-child td span {
+tbody tr:first-child td > div {
+    height: 100%;
     display: flex;
     flex-flow: column;
-    text-align: center;
-    align-self: flex-end;
+    align-items: center;
+    justify-content: flex-end;
 }

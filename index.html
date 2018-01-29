@@ -8,19 +8,35 @@
     </head>
     <body>
         <section>
-            <h1>My Cool Game</h1>
-
+            <div id="intro">
+                <h1>My Cool Game</h1>
+                <h4>Stephen Wanhella</h4>
+            </div>
             <div class='buttons'>
                 <span>Start New Game: </span>
                 <button id="start-easy">Easy</button>
                 <button id="start-medium">Medium (default)</button>
                 <button id="start-hard">Hard</button>
+            </div>
             <table>
                 <tbody id="game-table-body">
                 </tbody>
             </table>
-            <button id="reset">Reset</button>
-            <button id="solve">Solve</button>
+            <div class="buttons">
+                <button id="reset">Reset</button>
+                <button id="solve">Solve</button>
+            </div>
+        </section>
+        <section class="features">
+            <div class="features">
+                <h3 class="features">Features:</h3>
+                <ul class="features">
+                    <li>Multiple Difficulties</li>
+                    <li>Mark cells you know aren't spots</li>
+                    <li>Mark the top and side numbers when you're done</li>
+                    <li>Click and drag to select multiple cells at once</li>
+                </ul>
+            </div>
         </section>
         <script type="text/javascript" src="./index.js"></script>
     </body>
