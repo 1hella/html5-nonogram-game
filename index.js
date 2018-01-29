@@ -1,8 +1,8 @@
 const NUM_ROWS = 20;
 const NUM_COLS = NUM_ROWS;
-const EASY_PERCENT = 95;
-const MEDIUM_PERCENT = 85;
-const HARD_PERCENT = 75;
+const EASY_PERCENT = 92;
+const MEDIUM_PERCENT = 82;
+const HARD_PERCENT = 72;
 const EASY_DIFFICULTY = 'easy';
 const MEDIUM_DIFFICULTY = 'medium';
 const HARD_DIFFICULTY = 'hard';
@@ -15,7 +15,8 @@ const board = new Array(NUM_ROWS);
 const tableCells = new Array(NUM_ROWS + 1);
 const tbody = document.getElementById('game-table-body');
 
-let percentSpots;
+let percentSpots = undefined;
+let currentSelectState = undefined;
 
 makeTable();
 start(DEFAULT_DIFFICULTY);
@@ -166,6 +167,22 @@ function makeGame() {
 }
 
 function makeTable() {
+    let mouseoverListener = e => {
+        let tableCell = e.target;
+        let row = tableCell.dataset.row;
+        let col = tableCell.dataset.col;
+        if (row >= 0 && col >= 0 && e.buttons === 1 && currentSelectState !== undefined) {
+            e.preventDefault();
+            let cell = board[row][col];
+
+            cell.selectedState = currentSelectState;
+
+
+            updateTable();
+            checkForWin();
+        }
+    };
+
     for (let i = 0; i < NUM_ROWS + 1; i++) {
         tableCells[i] = new Array(NUM_COLS + 1);
         let row = document.createElement('tr');
@@ -177,6 +194,7 @@ function makeTable() {
             cell.setAttribute('data-col', j - 1);
             let cellClass = isInfoCell ? 'info-cell' : 'game-cell';
             cell.setAttribute('class', cellClass);
+            cell.addEventListener('mouseover', mouseoverListener);
             tableCells[i][j] = cell;
             row.appendChild(cell);
         }
@@ -184,12 +202,13 @@ function makeTable() {
         tbody.appendChild(row);
     }
 
-    tbody.addEventListener('click', (e) => {
+    document.addEventListener('mousedown', e => {
         let tableCell = e.target;
         let row = tableCell.dataset.row;
         let col = tableCell.dataset.col;
 
         if (row >= 0 && col >= 0) {
+            e.preventDefault();
             let cell = board[row][col];
 
             switch (cell.selectedState) {
@@ -204,8 +223,12 @@ function makeTable() {
                     break;
             }
 
+            currentSelectState = cell.selectedState;
+
             updateTable();
             checkForWin();
+        } else {
+            currentSelectState = undefined;
         }
     });
 }
