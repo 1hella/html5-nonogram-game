@@ -3,19 +3,36 @@ const numCols = numRows;
 const board = new Array(numRows);
 const tableCells = new Array(numRows + 1);
 const tbody = document.getElementById('game-table-body');
-const percentSpots = 65;
+const percentSpots = 75;
+
+const UNSELECTED = 0;
+const SELECTED = 1;
+const MARKED = 2;
 
 makeTable();
 makeGame();
 setHints();
 
 tbody.addEventListener('click', (e) => {
-    let cell = e.target;
-    let row = cell.dataset.row;
-    let col = cell.dataset.col;
+    let tableCell = e.target;
+    let row = tableCell.dataset.row;
+    let col = tableCell.dataset.col;
 
     if (row >= 0 && col >= 0) {
-        board[row][col].isChecked = !board[row][col].isChecked;
+        let cell = board[row][col];
+
+        switch (cell.selectedState) {
+            case UNSELECTED:
+                cell.selectedState = SELECTED;
+                break;
+            case SELECTED:
+                cell.selectedState = MARKED;
+                break;
+            case MARKED:
+                cell.selectedState = UNSELECTED;
+                break;
+        }
+
         updateTable();
         checkForWin();
     }
@@ -82,8 +99,8 @@ function checkForWin() {
         for (let j = 1; j < numCols + 1; j++) {
             let tableCell = tableCells[i][j];
             let cell = board[i - 1][j - 1];
-            if ((cell.isSpot && !cell.isChecked)
-                || (!cell.isSpot && cell.isChecked)) {
+            if ((cell.isSpot && cell.selectedState !== SELECTED)
+                || (!cell.isSpot && cell.selectedState === SELECTED)) {
                 return;
             }
         }
@@ -98,10 +115,15 @@ function updateTable() {
         for (let j = 1; j < numCols + 1; j++) {
             let tableCell = tableCells[i][j];
             let cell = board[i - 1][j - 1];
-            if (cell.isChecked) {
+            if (cell.selectedState === SELECTED) {
                 tableCell.classList.add("checked");
+                tableCell.classList.remove("marked")
+            } else if (cell.selectedState === MARKED) {
+                tableCell.classList.add("marked");
+                tableCell.classList.remove("checked")
             } else {
                 tableCell.classList.remove("checked");
+                tableCell.classList.remove("marked");
             }
         }
     }
@@ -112,7 +134,7 @@ function makeGame() {
         board[i] = new Array(numCols);
         for (let j = 0; j < numCols; j++) {
             board[i][j] = {
-                isChecked: false,
+                selectedState: UNSELECTED,
                 isSpot: Math.random() >= 1 - (percentSpots / 100)
             }
         }
@@ -143,7 +165,7 @@ function reset() {
     for (let i = 1; i < numRows + 1; i++) {
         for (let j = 1; j < numCols + 1; j++) {
             let cell = board[i - 1][j - 1];
-            cell.isChecked = false;
+            cell.selectedState = UNSELECTED;
         }
     }
 
@@ -154,7 +176,7 @@ function solve() {
     for (let i = 1; i < numRows + 1; i++) {
         for (let j = 1; j < numCols + 1; j++) {
             let cell = board[i - 1][j - 1];
-            cell.isChecked = cell.isSpot;
+            cell.selectedState = cell.isSpot ? SELECTED : UNSELECTED;
         }
     }
 

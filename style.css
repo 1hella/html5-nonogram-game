@@ -1,6 +1,3 @@
-section {
-    margin: initial auto;
-}
 table, tr, td {
     border: 1px solid black;
     border-collapse: collapse;
@@ -13,6 +10,14 @@ table td {
 
 .game-cell.checked {
     background-color: grey;
+}
+
+.game-cell.marked {
+    background: url('./icons8-delete-50.png');
+    -webkit-background-size: contain;
+    -moz-background-size: contain;
+    -o-background-size: contain;
+    background-size: contain;
 }
 
 .info-cell {
