@@ -270,5 +270,6 @@
         }
 
         updateTable();
+        checkForWin();
     }
 })();
